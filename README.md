@@ -1,6 +1,6 @@
 # testcafe-react-selectors
 
-An extension which simplifies the work with ReactJS components for [Tescafe](https://github.com/DevExpress/testcafe) e2e testing framework
+This plugin provides selector extensions that make it easier to test ReactJS components with [TestCafe](https://github.com/DevExpress/testcafe). These extensions allow you to select page elements in a way that is native to React.
 
 ##Install
 
@@ -8,10 +8,18 @@ An extension which simplifies the work with ReactJS components for [Tescafe](htt
 
 ##Usage
 
-####Create selector for ReactJS component
-`ReactSelector` allows create testcafe `Selector` being passed name of component class or nested component element.
-E.g. `ReactSelector('TodoList')`, `ReactSelector('TodoList TodoItem')`, `ReactSelector('TodoItem span')`  etc.
-You are free combine this selectors with testcafe `Selector` filter function like `.withText`, `.nth` and [others](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors)
+####Create selectors for ReactJS components
+
+`ReactSelector` allows you to select page elements by the name of the component class or the nested component element.
+For instance, you can create React selectors as follows
+
+```js
+ReactSelector('TodoList')
+ReactSelector('TodoList TodoItem')
+ReactSelector('TodoItem span')
+```
+
+You can combine React selectors with testcafe `Selector` filter functions like `.withText`, `.nth` and [other](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/selectors.html#functional-style-selectors).
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
@@ -19,21 +27,21 @@ import ReactSelector from 'testcafe-react-selectors';
 fixture('React application testing').page('http://localhost:1337');
 
 test('Add new item', async t => {
-    const getEl = ReactSelector('AddItemButton');
+    const addButton = ReactSelector('AddItemButton');
 
-    await t.click(getEl);
+    await t.click(addButton);
 
-    const iteamLabel = ReactSelector('Label div')
+    const itemLabel = ReactSelector('Label div')
 
-    await t.expect(iteamLabel.textContent).eql('New Item');
+    await t.expect(itemLabel.textContent).eql('New Item');
 });
 ```
 
-####Getting of component props and state
+####Obtaining component's props and state
 
-As an alternative [testcafe snapshot properties](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/dom-node-state.html) you can get a `state` or `props` of ReactJS  component. It could be useful for checking assertion and in many cases simplifies an assertion logic.
-You can get these data from `react` property of `ReactSelector` snapshot.
-The following example illustrates how it can be used:
+As an alternative to [testcafe snapshot properties](http://devexpress.github.io/testcafe/documentation/test-api/selecting-page-elements/dom-node-state.html), you can obtain `state` or `props` of a ReactJS component. You can use them in an assertion directly thus simplifying assertion logic.
+To get these data, use the `react` property of the `ReactSelector` snapshot.
+The following example illustrates how you can do this.
 
 ```js
 import ReactSelector from 'testcafe-react-selectors';
@@ -50,6 +58,6 @@ test('Add new item', async t => {
 ```
 
 ####Limitations
-`testcafe-react-selectors` supports ReactJS statring version 15.
-ReactSelector can find component which was inhereted from `React.Component`. For checking of availability you can use [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
-The searching of component starts from root React component, so selectors like `ReactSelector('body MyComponent')` will return `null`.
+`testcafe-react-selectors` support ReactJS starting with version 15.
+ReactSelector can only find components inherited from `React.Component`. To check if a component can be found, use the [react-dev-tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) extension.
+Search for a component starts from the root React component, so selectors like `ReactSelector('body MyComponent')` will return `null`.
