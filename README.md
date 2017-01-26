@@ -49,11 +49,11 @@ import ReactSelector from 'testcafe-react-selectors';
 fixture('React application testing').page('http://localhost:1337');
 
 test('Add new item', async t => {
-    const statusBar = await ReactSelector('Status Bar').react;
+    const statusBarReact = await ReactSelector('StatusBar').react;
 
     await t
-        .expect(statusBar.props.theme).eql('default');
-        .expect(statusBar.state.text).eql('my text');
+        .expect(statusBarReact.props.theme).eql('default');
+        .expect(statusBarReact.state.text).eql('my text');
 });
 ```
 
