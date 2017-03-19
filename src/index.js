@@ -13,7 +13,12 @@ const getComponentInstance = ClientFunction(el => {
         if (!el[prop]._currentElement._owner)
             return null;
 
-        return el[prop]._currentElement._owner._instance;
+        const instance = el[prop]._currentElement._owner._instance;
+
+        // TODO: check
+        // if(instance._reactInternalInstance._renderedComponent._hostNode !== el)
+        //     return null;
+        return instance;
     }
 });
 
@@ -49,28 +54,7 @@ const getReactObj = ClientFunction(node => {
         return copiedObj;
     }
 
-    function getComponentForDOMNode (el) {
-        if (!el || el.nodeType !== 1)
-            return null;
-
-        for (var prop of Object.keys(el)) {
-            if (!/^__reactInternalInstance/.test(prop))
-                continue;
-
-            //NOTE: stateless component
-            if (!el[prop]._currentElement._owner)
-                return null;
-
-            const foundInstance = el[prop]._currentElement._owner._instance;
-
-            if (foundInstance._reactInternalInstance._renderedComponent._hostNode !== el)
-                return null;
-
-            return foundInstance;
-        }
-    }
-
-    const componentInstance = getComponentForDOMNode(node);
+    const componentInstance = getComponentInstance(node);
 
     if (!componentInstance)
         return null;
@@ -79,7 +63,7 @@ const getReactObj = ClientFunction(node => {
         state: copyReactObject(componentInstance.state),
         props: copyReactObject(componentInstance.props)
     };
-});
+}, { dependencies: { getComponentInstance } });
 
 const filterByComponentName = ClientFunction((node, componentName) => {
     const componentInstance = getComponentInstance(node);
