@@ -27,10 +27,11 @@
     "gulp-babel": "^6.1.1",
     "gulp-eslint": "^1.1.1",
     "publish-please": "^2.2.0",
-    "react": "15.3.0"
+    "react": "15.3.0",
+    "testcafe": "file:///D:\\Git\\testcafe"
   },
   "scripts": {
-    "test": "gulp test",
+    "test": "testcafe chrome e2e/test.js",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },

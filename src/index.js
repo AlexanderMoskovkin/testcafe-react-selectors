@@ -1,8 +1,8 @@
-/*global document window*/
+/*global document*/
 var Selector = require('testcafe').Selector;
 
 export default Selector(selector => {
-    const SUPPORTED_REACT_VERSION = 15;
+    /*const SUPPORTED_REACT_VERSION = 15;
 
     if (!window.React)
         return document.querySelectorAll(selector);
@@ -11,7 +11,7 @@ export default Selector(selector => {
 
     if (reactVersion < SUPPORTED_REACT_VERSION)
         throw new Error('testcafe-react-selectors supports React version 15.x and newer');
-
+*/
     function reactSelect (compositeSelector) {
         const foundComponents = [];
         let foundInstance     = null;
@@ -38,8 +38,13 @@ export default Selector(selector => {
 
             if (reactComponentParent === DOMNode) {
                 //NOTE: IE hack
-                reactComponentName = foundInstance.constructor.name ||
-                                     foundInstance.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
+                if (foundInstance.constructor.name)
+                    reactComponentName = foundInstance.constructor.name;
+                else {
+                    const matches = foundInstance.constructor.toString().match(/^function\s*([^\s(]+)/);
+
+                    reactComponentName = matches ? matches[1] : DOMNode.tagName.toLowerCase();
+                }
             }
             else {
                 reactComponentName = DOMNode.tagName.toLowerCase();
@@ -103,8 +108,8 @@ export default Selector(selector => {
     }
 
     return reactSelect(selector);
-}).addCustomDOMProperties({
-    react: node => {
+}).addCustomMethods({
+    getReact: (node, fn) => {
         function copyReactObject (obj) {
             var copiedObj = {};
 
@@ -142,10 +147,12 @@ export default Selector(selector => {
         if (!componentInstance)
             return null;
 
-        return {
+        return fn({
             state: copyReactObject(componentInstance.state),
             props: copyReactObject(componentInstance.props)
-        };
+        });
+    },
+    findReact: node => {
+        return node;
     }
 });
-
