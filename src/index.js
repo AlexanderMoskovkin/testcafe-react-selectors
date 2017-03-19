@@ -151,8 +151,5 @@ export default Selector(selector => {
             state: copyReactObject(componentInstance.state),
             props: copyReactObject(componentInstance.props)
         });
-    },
-    findReact: node => {
-        return node;
     }
 });

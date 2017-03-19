@@ -1,24 +1,35 @@
 import ReactSelector from '../lib/index.js';
 
+// NOTE: This is a test for a Redux TodoMVC Example (https://github.com/reactjs/redux/tree/master/examples/todomvc)
 fixture `fixture`.page `http://localhost:3000/`;
 
 test('Test', async t => {
-    // Selector by tagName
+    // ----------------------------------------------------
+    // Should find elements by tagName
     await t.expect(ReactSelector('div').exists).ok();
 
-    // Selector by React Component Name
+
+    // ----------------------------------------------------
+    // Should find elements by React Component name
     const todoItem = ReactSelector('TodoItem');
+
     await t.expect(todoItem.count).eql(1);
 
-    // Selector by Components Hierarchy
+
+    // ----------------------------------------------------
+    // Should find elements by React Components hierarchy
     const todoTextInput = ReactSelector('Header TodoTextInput');
+
     await t
         .typeText(todoTextInput, 'My Item')
         .pressKey('enter')
         .expect(todoItem.count).eql(2);
 
-    // Complex Selector with Component name and tagName
-    const todoItemInput = ReactSelector('TodoItem input');  // finds elements with tagName `input` and components with name `input`
+
+    // ----------------------------------------------------
+    // Should find elements by both, React Component name and tagName
+    const todoItemInput = ReactSelector('TodoItem input');
+
     await t.expect(todoItemInput.count).eql(2);
 
     const firstInput = todoItem.nth(0).find('input');
@@ -28,35 +39,10 @@ test('Test', async t => {
         .click(firstInput)
         .expect(firstInput.checked).ok();
 
-    const completed = todoItem.nth(0).getReact(react => react.props.todo.completed);
-    await t.expect(completed).eql(true, '', { timeout: 10000 });
 
-    // find by component name or cssSelector
-    const mainSection    = ReactSelector('MainSection');
-    const todoItemByFind = await mainSection.findReact('TodoItem');
-    console.log(todoItemByFind);
+    // ----------------------------------------------------
+    // Should provide `getReact` function to get react object ({ props, state }) for the element.
+    const completed = todoItem.nth(0).getReact(({ props }) => props.todo.completed);
 
-    //const firstInputByFind = todoItemByFind.nth(0).find('input');
-
-    /*await t
-        .expect(todoItemByFind.count).eql(2)
-        .click(firstInputByFind)
-        .expect(firstInputByFind.checked).ok();*/
-    /*
-    // react: { props, state, componentName }
-    await t.expect(firstInputByFind.react.props.checked).ok();
-
-    const todoItemTodoProps = await todoItemByFind.react.props.todo;
-    await t.expect(todoItemTodoProps.completed).ok();
-
-    // complex variables
-    await t.expect(firstInput.react.props['todo.completed']).ok();
-
-    const completed = firstInput.getReact(react => react.props.todo.completed);
-    await t.expect(completed).ok();
-
-    // filterFn
-    const completedItems = todoItemByFind.filter(node => node.react.props.todo.completed);
-    await t.expect(completedItems.count).eql(1);
-*/
+    await t.expect(completed).eql(true);
 });
