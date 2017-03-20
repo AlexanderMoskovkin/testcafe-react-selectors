@@ -52,29 +52,25 @@ test('Should not get DOM node for element outside react component tree ', async 
 
 
 test('Should get component state', async t => {
-    var listItem1React = (await ReactSelector('ListItem')).react;
-    var listItem2React = await ReactSelector('ListItem').nth(1).react;
-    var listItem3React = await ReactSelector('ListItem').nth(2).react;
-
-    var tagReact = await ReactSelector('ListItem p').react;
+    var getItemId = ({ state }) => state.itemId;
+    var listItem  = ReactSelector('ListItem');
 
     await t
-        .expect(listItem1React.state).eql({ itemId: 'l1-item1' })
-        .expect(listItem2React.state).eql({ itemId: 'l1-item2' })
-        .expect(listItem3React.state).eql({ itemId: 'l1-item3' })
+        .expect(listItem.getReact(getItemId)).eql('l1-item1')
+        .expect(listItem.nth(1).getReact(getItemId)).eql('l1-item2')
+        .expect(listItem.nth(2).getReact(getItemId)).eql('l1-item3')
 
-        .expect(tagReact).notOk();
+        .expect(listItem.find('p').getReact(react => react)).eql(null);
 });
 
 test('Should get component props', async t => {
-    var listItem1React = await ReactSelector('ListItem').react;
-    var listItem2React = await ReactSelector('ListItem').nth(1).react;
-    var listItem3React = await ReactSelector('ListItem').nth(2).react;
+    var getId    = ({ props }) => props.id;
+    var listItem = ReactSelector('ListItem');
 
     await t
-        .expect(listItem1React.props).eql({ id: 'l1-item1' })
-        .expect(listItem2React.props).eql({ id: 'l1-item2' })
-        .expect(listItem3React.props).eql({ id: 'l1-item3' });
+        .expect(listItem.getReact(getId)).eql('l1-item1')
+        .expect(listItem.nth(1).getReact(getId)).eql('l1-item2')
+        .expect(listItem.nth(2).getReact(getId)).eql('l1-item3');
 });
 
 test('Version of React js is not supported', async t => {
