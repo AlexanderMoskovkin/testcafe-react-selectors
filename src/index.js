@@ -2,7 +2,7 @@
 import { Selector, ClientFunction } from 'testcafe';
 
 const getComponentInstance = ClientFunction(el => {
-    if (el.nodeType !== 1)
+    if (!el || el.nodeType !== 1)
         return null;
 
     for (var prop of Object.keys(el)) {
@@ -16,8 +16,9 @@ const getComponentInstance = ClientFunction(el => {
         const instance = el[prop]._currentElement._owner._instance;
 
         // TODO: check
-        // if(instance._reactInternalInstance._renderedComponent._hostNode !== el)
-        //     return null;
+        if (instance._reactInternalInstance._renderedComponent._hostNode !== el)
+            return null;
+
         return instance;
     }
 });
@@ -74,6 +75,11 @@ const filterByComponentName = ClientFunction((node, componentName) => {
     return getComponentName(node, componentInstance) === componentName;
 }, { dependencies: { getComponentInstance, getComponentName } });
 
+const getReact = ClientFunction((node, fn) => {
+    const reactObj = getReactObj(node);
+
+    return reactObj ? fn(reactObj) : null;
+}, { dependencies: { getReactObj } });
 
 export default function (compositeSelector, options) {
     if (typeof compositeSelector !== 'string')
@@ -106,12 +112,6 @@ export default function (compositeSelector, options) {
 
     for (let chunkIdx = 1; chunkIdx < selectorChunks.length; chunkIdx++)
         res = res.find(filter, { filterByComponentName, selector: selectorChunks[chunkIdx] });
-
-    const getReact = ClientFunction((node, fn) => {
-        const reactObj = getReactObj(node);
-
-        return reactObj ? fn(reactObj) : null;
-    }, { dependencies: { getReactObj } });
 
     return res.addCustomMethods({ getReact });
 }
