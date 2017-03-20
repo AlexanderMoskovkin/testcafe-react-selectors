@@ -17,7 +17,7 @@ export default Selector(selector => {
         let foundInstance     = null;
 
         function getComponentInstance (el) {
-            if (el.nodeType !== 1)
+            if (!el || el.nodeType !== 1)
                 return null;
 
             for (var prop of Object.keys(el)) {
@@ -151,8 +151,5 @@ export default Selector(selector => {
             state: copyReactObject(componentInstance.state),
             props: copyReactObject(componentInstance.props)
         });
-    },
-    findReact: node => {
-        return node;
     }
 });
