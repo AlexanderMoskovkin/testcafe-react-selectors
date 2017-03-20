@@ -31,7 +31,7 @@
     "testcafe": "file:///D:\\Git\\testcafe"
   },
   "scripts": {
-    "test": "testcafe chrome e2e/test.js",
+    "test": "gulp test",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },
